@@ -16,7 +16,16 @@
    :body (pr-str ["Hello" :from 'Heroku])
    :body (for [kind ["camel" "snake" "kebab"]]
            (format "<a href=\"/%s?input=%s\">%s %s</a><br />"
-                   kind sample kind sample))})
+                   kind sample kind sample))
+   ["<hr /><ul>"]
+   (for [s (db/query (env :database-url)
+                     ["select content from sayings"])]
+     (format "<li>%s</li>" (:content s)))
+   ["</ul>"]})
+
+(defn record [input]
+  (db/insert! (env :database-url "postgres://localhost:5432/kebabs")
+              :sayings {:content input}))
 
 (defroutes app
   (GET "/camel" {{input :input} :params}
