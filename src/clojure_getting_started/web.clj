@@ -7,10 +7,16 @@
             [environ.core :refer [env]]
             [camel-snake-kebab.core :as kebab]))
 
+;;; defining variables
+(def sample (env :sample "sample-string-thing"))
+
 (defn splash []
   {:status 200
-   :headers {"Content-Type" "text/plain"}
-   :body (pr-str ["Hello" :from 'Heroku])})
+   :headers {"Content-Type" "text/html"}
+   :body (pr-str ["Hello" :from 'Heroku])
+   :body (for [kind ["camel" "snake" "kebab"]]
+           (format "<a href=\"/%s?input=%s\">%s %s</a><br />"
+                   kind sample kind sample))})
 
 (defroutes app
   (GET "/camel" {{input :input} :params}
